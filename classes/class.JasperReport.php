@@ -2,10 +2,11 @@
 require_once('./Services/Component/classes/class.ilComponent.php');
 
 /**
- * ilJasperReport
+ * class JasperReport
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @author  Martin Studer <ms@studer-raimann.ch>
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  */
 class JasperReport {
 
@@ -16,6 +17,7 @@ class JasperReport {
 
     const DATASOURCE_EMPTY = 0;
     const DATASOURCE_DB = 1;
+    const DATASOURCE_CSV = 2;
 
     /**
 	 * Choose a Locale from your unix-system: locale -a
@@ -23,37 +25,100 @@ class JasperReport {
 	 */
 	const LOCALE = 'de_DE.UTF-8';
 
-	/** @var string  */
+    /**
+     * @var string
+     */
     protected $output_name = '';
 
-	/** @var string  */
+    /**
+     * @var string
+     */
     protected $response = '';
 
-    /** @var string  */
+    /**
+     * @var string
+     */
     private $root = '';
 
-	/** @var string  */
-	private $tmpdir = '';
+    /**
+     * @var string
+     */
+    private $tmpdir = '';
 
-    /** @var array  */
+    /**
+     * @var array
+     */
     protected $parameters = array();
 
-    /** @var string  */
+    /**
+     * @var string
+     */
     protected $output_file = '';
 
-    /** @var string  */
+    /**
+     * @var string
+     */
     protected $template = '';
 
-	/** @var string  */
+    /**
+     * @var string
+     */
     protected $notification = '';
 
-	/** @var string  */
+    /**
+     * @var string
+     */
     protected $encoding = 'UTF-8';
 
-    /** @var bool  */
+    /**
+     * @var bool
+     */
     protected $generated = false;
 
+    /**
+     * @var int
+     */
     protected $data_source = self::DATASOURCE_DB;
+
+    /**
+     * Path to the CSV file that is used as source if mode = CSV
+     * @var string
+     */
+    protected $csv_file = '';
+
+    /**
+     * Separator for fields if mode = CSV
+     * @var string
+     */
+    protected $csv_field_delimiter = ',';
+
+    /**
+     * True if first row of csv file describes columns/variables
+     * @var bool
+     */
+    protected $csv_first_row = true;
+
+    /**
+     * Columns of csv, if not taken from first row
+     * @var array
+     */
+    protected $csv_columns = array();
+
+    /**
+     * @var string
+     */
+    protected $csv_charset = 'UTF-8';
+
+    /**
+     * @var string
+     */
+    protected $csv_record_delimiter = '\n';
+
+    /**
+     * @var string
+     */
+    protected $path_java = '/usr/bin/java';
+
 
 	/**
 	 * @param string $template Path and filename of the xml template for the report
@@ -84,13 +149,16 @@ class JasperReport {
 	}
 
 
-	function __destruct() {
-		//Delete Temporary Directory
+    /**
+     * Delete temp directory
+     */
+    function __destruct() {
 		ilUtil::delDir($this->getTmpdir());
 	}
 
     /**
      * Add a parameter
+     *
      * @param $key
      * @param $value
      */
@@ -102,23 +170,35 @@ class JasperReport {
 	 * @return string
 	 */
 	public function generateOutput() {
-
 		$this->setOutputFile($this->getTmpdir() . DIRECTORY_SEPARATOR . str_ireplace(' ', '_', $this->getOutputName()));
 		// Build Execution Statement
 		$exec  = 'export LC_ALL="' . self::LOCALE . '"; ';
-		$exec .= '/usr/bin/java';
+		$exec .= $this->getPathJava();
 		$exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . self::VERSION . '/lib/jasperstarter.jar pr';
         $exec .= ' ' . $this->template;
         $exec .= ' -f pdf ';
 		$exec .= ' -o ' . $this->getOutputFile();
 		$exec .= $this->buildParameters();
-		// Add DB Connection
-		if ($this->getDataSource() == self::DATASOURCE_DB) {
-            $exec .= ' -t ' . $this->db->getDBType();
-            $exec .= ' -u ' . $this->db->getDBUser();
-            $exec .= ' -H ' . $this->db->getDBHost();
-            $exec .= ' -n ' . $this->db->getDBName();
-            $exec .= ' -p ' . $this->db->getDBPassword();
+		// Add Options depending on Datasource (DB/CSV/NONE)
+		switch ($this->getDataSource()) {
+            case self::DATASOURCE_DB:
+                $exec .= ' -t ' . $this->db->getDBType();
+                $exec .= ' -u ' . $this->db->getDBUser();
+                $exec .= ' -H ' . $this->db->getDBHost();
+                $exec .= ' -n ' . $this->db->getDBName();
+                $exec .= ' -p ' . $this->db->getDBPassword();
+                break;
+            case self::DATASOURCE_CSV:
+                $exec .= ' -t csv --data-file ' . $this->getCsvFile();
+                $exec .= ' --csv-field-del=' . $this->quote($this->getCsvFieldDelimiter());
+                $exec .= ' --csv-record-del=' . $this->quote($this->getCsvRecordDelimiter());
+                $exec .= ' --csv-charset=' . $this->getCsvCharset();
+                if ($this->getCsvFirstRow()) {
+                    $exec .= ' --csv-first-row';
+                } else if (count($this->getCsvColumns())) {
+                    $exec .= ' --csv-columns ' . implode(',', $this->getCsvColumns());
+                }
+                break;
         }
 		// Execute
 //		var_dump($exec); die();
@@ -159,8 +239,10 @@ class JasperReport {
 		. '.pdf'), '', true, true, $exit_after);
 	}
 
+
     /**
      * Build parameters passed to jasperstarter jar
+     *
      * @return string
      */
     private function buildParameters() {
@@ -181,6 +263,7 @@ class JasperReport {
         return $return;
     }
 
+
     /**
      * @param $str
      * @return string
@@ -189,9 +272,11 @@ class JasperReport {
         return '"' . str_replace('"', '\"', $str) . '"';
     }
 
+
     /**
      * Getter & Setter
      */
+
 
     /**
 	 * @param string $output_name
@@ -340,6 +425,117 @@ class JasperReport {
         return $this->data_source;
     }
 
+    /**
+     * @param string $csv_file
+     */
+    public function setCsvFile($csv_file)
+    {
+        $this->csv_file = $csv_file;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCsvFile()
+    {
+        return $this->csv_file;
+    }
+
+    /**
+     * @param string $csv_charset
+     */
+    public function setCsvCharset($csv_charset)
+    {
+        $this->csv_charset = $csv_charset;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCsvCharset()
+    {
+        return $this->csv_charset;
+    }
+
+    /**
+     * @param array $csv_columns
+     */
+    public function setCsvColumns($csv_columns)
+    {
+        $this->csv_columns = $csv_columns;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCsvColumns()
+    {
+        return $this->csv_columns;
+    }
+
+    /**
+     * @param string $csv_field_delimiter
+     */
+    public function setCsvFieldDelimiter($csv_field_delimiter)
+    {
+        $this->csv_field_delimiter = $csv_field_delimiter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCsvFieldDelimiter()
+    {
+        return $this->csv_field_delimiter;
+    }
+
+    /**
+     * @param boolean $csv_first_row
+     */
+    public function setCsvFirstRow($csv_first_row)
+    {
+        $this->csv_first_row = $csv_first_row;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCsvFirstRow()
+    {
+        return $this->csv_first_row;
+    }
+
+    /**
+     * @param string $csv_record_delimiter
+     */
+    public function setCsvRecordDelimiter($csv_record_delimiter)
+    {
+        $this->csv_record_delimiter = $csv_record_delimiter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCsvRecordDelimiter()
+    {
+        return $this->csv_record_delimiter;
+    }
+
+    /**
+     * @param string $path_java
+     */
+    public function setPathJava($path_java)
+    {
+        $this->path_java = $path_java;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPathJava()
+    {
+        return $this->path_java;
+    }
 
 }
 
