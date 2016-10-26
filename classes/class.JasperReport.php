@@ -1,5 +1,6 @@
 <?php
 require_once('./Services/Component/classes/class.ilComponent.php');
+require_once(__DIR__ . '/class.JasperReportException.php');
 
 /**
  * class JasperReport
@@ -8,42 +9,43 @@ require_once('./Services/Component/classes/class.ilComponent.php');
  * @author  Martin Studer <ms@studer-raimann.ch>
  * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  */
-class JasperReport {
+class JasperReport
+{
 
-	const TYPE_PDF = 'pdf';
-	const TYPE_HTML = 'html';
-	const VERSION = '2.0.0';
-	const DEBUG = false;
+    const VERSION = '2.0.0';
 
     const DATASOURCE_EMPTY = 0;
     const DATASOURCE_DB = 1;
     const DATASOURCE_CSV = 2;
 
     /**
-	 * Choose a Locale from your unix-system: locale -a
-	 * The Locale should support all characters you need, such as German-Umlauts.
-	 */
-	const LOCALE = 'de_DE.UTF-8';
+     * Choose a Locale from your unix-system: locale -a
+     * The Locale should support all characters you need, such as German-Umlauts.
+     *
+     * @var string
+     */
+    protected $locale = 'de_DE.UTF-8';
 
     /**
+     * The filename of the output file that is generated
+     *
      * @var string
      */
     protected $output_name = '';
 
     /**
+     * Corresponds to parameter "-f" of jasperstarter
+     *
+     * @see http://jasperstarter.cenote.de/usage.html
+     *
      * @var string
      */
-    protected $response = '';
+    protected $output_mode = 'pdf';
 
     /**
      * @var string
      */
-    private $root = '';
-
-    /**
-     * @var string
-     */
-    private $tmpdir = '';
+    protected $tmpdir = '';
 
     /**
      * @var array
@@ -53,27 +55,12 @@ class JasperReport {
     /**
      * @var string
      */
-    protected $output_file = '';
-
-    /**
-     * @var string
-     */
     protected $template = '';
 
     /**
      * @var string
      */
-    protected $notification = '';
-
-    /**
-     * @var string
-     */
     protected $encoding = 'UTF-8';
-
-    /**
-     * @var bool
-     */
-    protected $generated = false;
 
     /**
      * @var int
@@ -82,24 +69,28 @@ class JasperReport {
 
     /**
      * Path to the CSV file that is used as source if mode = CSV
+     *
      * @var string
      */
     protected $csv_file = '';
 
     /**
      * Separator for fields if mode = CSV
+     *
      * @var string
      */
     protected $csv_field_delimiter = ',';
 
     /**
      * True if first row of csv file describes columns/variables
+     *
      * @var bool
      */
     protected $csv_first_row = true;
 
     /**
      * Columns of csv, if not taken from first row
+     *
      * @var array
      */
     protected $csv_columns = array();
@@ -119,68 +110,102 @@ class JasperReport {
      */
     protected $path_java = '/usr/bin/java';
 
+    /**
+     * @var string
+     */
+    protected $output_file = '';
 
-	/**
-	 * @param string $template Path and filename of the xml template for the report
-	 * @param string $output_name Filename of the generated pdf
-	 */
-	function __construct($template, $output_name = 'myreport') {
-		global $ilDB, $ilUser, $ilCtrl, $ilLog;
-		/**
-		 * @var $ilDB   ilDB
-		 * @var $ilUser ilObjUser
-		 * @var $ilCtrl ilCtrl
-		 * @var $ilLog  ilLog
-		 */
-		$this->db = $ilDB;
-		$this->log = $ilLog;
-		$this->user = $ilUser;
-		$this->ctrl = $ilCtrl;
-		$this->template = $template;
-		$this->setOutputName($output_name);
-		//Temporary Directory for saving the report.
-		$tmpdir = ilUtil::ilTempnam();
+
+    /**
+     * @param string $template Path and filename of the xml template for the report
+     * @param string $output_name Filename of the generated pdf
+     */
+    function __construct($template, $output_name = 'myreport')
+    {
+        global $ilDB, $ilUser, $ilCtrl, $ilLog;
+        /**
+         * @var $ilDB   ilDB
+         * @var $ilUser ilObjUser
+         * @var $ilCtrl ilCtrl
+         * @var $ilLog  ilLog
+         */
+        $this->db = $ilDB;
+        $this->log = $ilLog;
+        $this->user = $ilUser;
+        $this->ctrl = $ilCtrl;
+        $this->template = $template;
+        $this->setOutputName($output_name);
+        $this->makeTempDir();
+    }
+
+
+    protected function makeTempDir()
+    {
+        $tmpdir = ilUtil::ilTempnam();
         ilUtil::makeDir($tmpdir);
-		$this->setTmpdir($tmpdir);
-		$this->setRoot(substr(__FILE__, 0, strpos(__FILE__, 'classes/' . basename(__FILE__))));
-		if (self::DEBUG) {
-			$this->log->write('ilJasperReport::__construct finished');
-		}
-	}
+        $this->setTmpdir($tmpdir);
+    }
+
+
+    /**
+     * Build parameters passed to jasperstarter jar
+     *
+     * @return string
+     */
+    protected function buildParameters()
+    {
+        $return = '';
+        if (count($this->parameters)) {
+            $return = ' -P ';
+            foreach ($this->parameters as $k => $v) {
+                $return .= ' ' . $k . '=' . $this->quote($v);
+            }
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * @param $str
+     * @return string
+     */
+    protected function quote($str)
+    {
+        return '"' . str_replace('"', '\"', $str) . '"';
+    }
 
 
     /**
      * Delete temp directory
      */
-    function __destruct() {
-		ilUtil::delDir($this->getTmpdir());
-	}
-
-    /**
-     * Add a parameter
-     *
-     * @param $key
-     * @param $value
-     */
-    public function addParameter($key, $value) {
-        $this->parameters[$key] = $value;
+    public function __destruct()
+    {
+        ilUtil::delDir($this->getTmpdir());
     }
 
-	/**
-	 * @return string
-	 */
-	public function generateOutput() {
-		$this->setOutputFile($this->getTmpdir() . DIRECTORY_SEPARATOR . str_ireplace(' ', '_', $this->getOutputName()));
-		// Build Execution Statement
-		$exec  = 'export LC_ALL="' . self::LOCALE . '"; ';
-		$exec .= $this->getPathJava();
-		$exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . self::VERSION . '/lib/jasperstarter.jar pr';
+
+    /**
+     * Tries to generate the file file with JasperReport.
+     * On success, this method returns the path to the generated file (inside a temporary ILIAS directory)
+     * On failure, an JapserReportException is thrown, containing the errors reported back from jasperstarter as array
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function generateOutput()
+    {
+        $this->output_file = $this->getTmpdir() . DIRECTORY_SEPARATOR . $this->getOutputName();
+        // Build Execution Statement
+        $exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
+        $exec .= $this->getPathJava();
+        $exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . self::VERSION . '/lib/jasperstarter.jar pr';
         $exec .= ' ' . $this->template;
-        $exec .= ' -f pdf ';
-		$exec .= ' -o ' . $this->getOutputFile();
-		$exec .= $this->buildParameters();
-		// Add Options depending on Datasource (DB/CSV/NONE)
-		switch ($this->getDataSource()) {
+        $exec .= ' -f ' . $this->getOutputMode() . ' ';
+        $exec .= ' -o ' . $this->getOutputFile();
+        $exec .= $this->buildParameters();
+        // Add Options depending on Datasource (DB/CSV/NONE)
+        switch ($this->getDataSource()) {
             case self::DATASOURCE_DB:
                 $exec .= ' -t ' . $this->db->getDBType();
                 $exec .= ' -u ' . $this->db->getDBUser();
@@ -200,214 +225,113 @@ class JasperReport {
                 }
                 break;
         }
-		// Execute
-//		var_dump($exec); die();
-        if (self::DEBUG) {
-			$this->log->write('Jasperreport::generateOutput() exec: ' . $exec);
-		}
-		$re = array();
-		exec($exec, $re);
-//        var_dump($re);die();
-		// Generate Messages
-		if ($re) {
-			if (self::DEBUG) {
-				$this->log->write('Jasperreport::generateOutput() response: ' . implode(', ', $re));
-			}
-			$this->setResponse($re);
-			if ($this->getNotification()) {
-				ilUtil::sendFailure($this->getResponse());
-			}
+        // Redirect stderr to stdout because PHP's exec() only returns stdout
+        // Note: If Jasperstarter one day returns anything on the stdout, we must use another function, e.g. proc_open()
+        $exec .= ' 2>&1';
+        $errors = array();
+        exec($exec, $errors);
+        if (count($errors)) {
+            $exception = new JasperReportException("Jasperstarter failed to generate output filed");
+            $exception->setErrors($errors);
+            throw $exception;
+        }
 
-			return false;
-		} else {
-			if ($this->getNotification()) {
-				ilUtil::sendInfo($this->getNotification(), true);
-			}
-			$this->generated = true;
-		}
-
-		return $this->getOutputFile();
-	}
-
-
-	/**
-	 * @param bool $exit_after
-	 */
-	public function downloadFile($exit_after = true) {
-        if (!$this->generated) $this->generateOutput();
-		ilUtil::deliverFile($this->getOutputFile() . '.pdf', basename($this->getOutputFile()
-		. '.pdf'), '', true, true, $exit_after);
-	}
+        return $this->getOutputFile();
+    }
 
 
     /**
-     * Build parameters passed to jasperstarter jar
+     * Add a parameter
      *
-     * @return string
+     * @param $key
+     * @param $value
      */
-    private function buildParameters() {
-        $return = '';
-        if (self::DEBUG) {
-            $this->log->write('::buildParameters started');
-        }
-        if (count($this->parameters)) {
-            $return = ' -P ';
-            foreach ($this->parameters as $k => $v) {
-                $return .= ' ' . $k . '=' . $this->quote($v);
-            }
-        }
-        if (self::DEBUG) {
-            $this->log->write('ilJasperReport::buildParameters: ' . $return);
-            $this->log->write('ilJasperReport::buildParameters finished');
-        }
-        return $return;
+    public function addParameter($key, $value)
+    {
+        $this->parameters[$key] = $value;
     }
 
 
     /**
-     * @param $str
-     * @return string
+     * @param string $output_name
      */
-    private function quote($str) {
-        return '"' . str_replace('"', '\"', $str) . '"';
+    public function setOutputName($output_name)
+    {
+        $this->output_name = $output_name;
     }
 
 
     /**
-     * Getter & Setter
+     * @return string
      */
+    public function getOutputName()
+    {
+        return $this->output_name;
+    }
 
 
     /**
-	 * @param string $output_name
-	 */
-	public function setOutputName($output_name) {
-		$this->output_name = $output_name;
-	}
+     * @return string
+     */
+    private function getRoot()
+    {
+        return substr(__FILE__, 0, strpos(__FILE__, 'classes/' . basename(__FILE__)));
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function getOutputName() {
-		return $this->output_name;
-	}
+    /**
+     * @param string $tmpdir
+     */
+    private function setTmpdir($tmpdir)
+    {
+        $this->tmpdir = $tmpdir;
+    }
 
 
-	/**
-	 * @param string $response
-	 */
-	private function setResponse($response) {
-		$this->response = $response;
-	}
+    /**
+     * @return string
+     */
+    private function getTmpdir()
+    {
+        return $this->tmpdir;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	private function getResponse() {
-		switch ($this->response) {
-			case 127:
-				$this->response = 'Jasper Starter V.' . self::VERSION . ' not found';
-				break;
-		}
-		return $this->response;
-	}
+    /**
+     * @param array $parameters
+     */
+    public function setParameters($parameters)
+    {
+        $this->parameters = $parameters;
+    }
 
 
-	/**
-	 * @param string $root
-	 */
-	private function setRoot($root) {
-		$this->root = $root;
-	}
+    /**
+     * @return array
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	private function getRoot() {
-		return $this->root;
-	}
-
-	/**
-	 * @param string $tmpdir
-	 */
-	private function setTmpdir($tmpdir) {
-		$this->tmpdir = $tmpdir;
-	}
+    /**
+     * @param string $encoding
+     */
+    public function setEncoding($encoding)
+    {
+        $this->encoding = $encoding;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	private function getTmpdir() {
-		return $this->tmpdir;
-	}
+    /**
+     * @return string
+     */
+    public function getEncoding()
+    {
+        return $this->encoding;
+    }
 
-
-	/**
-	 * @param array $parameters
-	 */
-	public function setParameters($parameters) {
-		$this->parameters = $parameters;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getParameters() {
-		return $this->parameters;
-	}
-
-
-	/**
-	 * @param string $output_file
-	 */
-	public function setOutputFile($output_file) {
-		$this->output_file = $output_file;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getOutputFile() {
-		return $this->output_file;
-	}
-
-
-	/**
-	 * @param string $notification
-	 */
-	public function setNotification($notification) {
-		$this->notification = $notification;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getNotification() {
-		return $this->notification;
-	}
-
-
-	/**
-	 * @param string $encoding
-	 */
-	public function setEncoding($encoding) {
-		$this->encoding = $encoding;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getEncoding() {
-		return $this->encoding;
-	}
 
     /**
      * @param int $data_source
@@ -417,6 +341,7 @@ class JasperReport {
         $this->data_source = $data_source;
     }
 
+
     /**
      * @return int
      */
@@ -424,6 +349,7 @@ class JasperReport {
     {
         return $this->data_source;
     }
+
 
     /**
      * @param string $csv_file
@@ -433,6 +359,7 @@ class JasperReport {
         $this->csv_file = $csv_file;
     }
 
+
     /**
      * @return string
      */
@@ -440,6 +367,7 @@ class JasperReport {
     {
         return $this->csv_file;
     }
+
 
     /**
      * @param string $csv_charset
@@ -449,6 +377,7 @@ class JasperReport {
         $this->csv_charset = $csv_charset;
     }
 
+
     /**
      * @return string
      */
@@ -456,6 +385,7 @@ class JasperReport {
     {
         return $this->csv_charset;
     }
+
 
     /**
      * @param array $csv_columns
@@ -465,6 +395,7 @@ class JasperReport {
         $this->csv_columns = $csv_columns;
     }
 
+
     /**
      * @return array
      */
@@ -472,6 +403,7 @@ class JasperReport {
     {
         return $this->csv_columns;
     }
+
 
     /**
      * @param string $csv_field_delimiter
@@ -481,6 +413,7 @@ class JasperReport {
         $this->csv_field_delimiter = $csv_field_delimiter;
     }
 
+
     /**
      * @return string
      */
@@ -488,6 +421,7 @@ class JasperReport {
     {
         return $this->csv_field_delimiter;
     }
+
 
     /**
      * @param boolean $csv_first_row
@@ -497,6 +431,7 @@ class JasperReport {
         $this->csv_first_row = $csv_first_row;
     }
 
+
     /**
      * @return boolean
      */
@@ -504,6 +439,7 @@ class JasperReport {
     {
         return $this->csv_first_row;
     }
+
 
     /**
      * @param string $csv_record_delimiter
@@ -513,6 +449,7 @@ class JasperReport {
         $this->csv_record_delimiter = $csv_record_delimiter;
     }
 
+
     /**
      * @return string
      */
@@ -520,6 +457,7 @@ class JasperReport {
     {
         return $this->csv_record_delimiter;
     }
+
 
     /**
      * @param string $path_java
@@ -529,6 +467,7 @@ class JasperReport {
         $this->path_java = $path_java;
     }
 
+
     /**
      * @return string
      */
@@ -537,6 +476,49 @@ class JasperReport {
         return $this->path_java;
     }
 
-}
 
-?>
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getOutputMode()
+    {
+        return $this->output_mode;
+    }
+
+
+    /**
+     * @param string $output_mode
+     */
+    public function setOutputMode($output_mode)
+    {
+        $this->output_mode = $output_mode;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getOutputFile()
+    {
+        return $this->output_file;
+    }
+
+}
