@@ -240,6 +240,14 @@ class JasperReport
     }
 
 
+    /**		
+    * @param bool $exit_after		
+    */		
+    public function downloadFile($exit_after = true) {		
+        if (!$this->generated) $this->generateOutput();		
+	    ilUtil::deliverFile($this->getOutputFile() . '.pdf', basename($this->getOutputFile()		
+            . '.pdf'), '', true, true, $exit_after);		
+    }
     /**
      * Add a parameter
      *
