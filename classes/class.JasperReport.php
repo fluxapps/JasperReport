@@ -112,6 +112,12 @@ class JasperReport {
 	 * @var ilCtrl
 	 */
 	protected $ctrl;
+	/**
+	 * TODO Not assigned?
+	 *
+	 * @var bool
+	 */
+	protected $generated = false;
 
 
 	/**
