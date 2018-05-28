@@ -113,8 +113,6 @@ class JasperReport {
 	 */
 	protected $ctrl;
 	/**
-	 * TODO Not assigned?
-	 *
 	 * @var bool
 	 */
 	protected $generated = false;
@@ -188,47 +186,51 @@ class JasperReport {
 	 * @throws Exception
 	 */
 	public function generateOutput() {
-		$this->output_file = $this->getTmpdir() . DIRECTORY_SEPARATOR . $this->getOutputName();
-		// Build Execution Statement
-		$exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
-		$exec .= $this->getPathJava();
-		$exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . self::VERSION . '/lib/jasperstarter.jar pr';
-		$exec .= ' ' . $this->template;
-		$exec .= ' -f ' . $this->getOutputMode() . ' ';
-		$exec .= ' -o ' . $this->getOutputFile();
-		$exec .= $this->buildParameters();
-		// Add Options depending on Datasource (DB/CSV/NONE)
-		switch ($this->getDataSource()) {
-			case self::DATASOURCE_DB:
-				$exec .= ' -t ' . $this->db->getDBType();
-				$exec .= ' -u ' . $this->db->getDBUser();
-				$exec .= ' -H ' . $this->db->getDBHost();
-				$exec .= ' -n ' . $this->db->getDBName();
-				$exec .= ' -p ' . $this->db->getDBPassword();
-				break;
-			case self::DATASOURCE_CSV:
-				$exec .= ' -t csv --data-file ' . $this->getCsvFile();
-				$exec .= ' --csv-field-del=' . $this->quote($this->getCsvFieldDelimiter());
-				$exec .= ' --csv-record-del=' . $this->quote($this->getCsvRecordDelimiter());
-				$exec .= ' --csv-charset=' . $this->getCsvCharset();
-				if ($this->getCsvFirstRow()) {
-					$exec .= ' --csv-first-row';
-				} else {
-					if (count($this->getCsvColumns())) {
-						$exec .= ' --csv-columns ' . implode(',', $this->getCsvColumns());
+		if (!$this->generated) {
+			$this->output_file = $this->getTmpdir() . DIRECTORY_SEPARATOR . $this->getOutputName();
+			// Build Execution Statement
+			$exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
+			$exec .= $this->getPathJava();
+			$exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . self::VERSION . '/lib/jasperstarter.jar pr';
+			$exec .= ' ' . $this->template;
+			$exec .= ' -f ' . $this->getOutputMode() . ' ';
+			$exec .= ' -o ' . $this->getOutputFile();
+			$exec .= $this->buildParameters();
+			// Add Options depending on Datasource (DB/CSV/NONE)
+			switch ($this->getDataSource()) {
+				case self::DATASOURCE_DB:
+					$exec .= ' -t ' . $this->db->getDBType();
+					$exec .= ' -u ' . $this->db->getDBUser();
+					$exec .= ' -H ' . $this->db->getDBHost();
+					$exec .= ' -n ' . $this->db->getDBName();
+					$exec .= ' -p ' . $this->db->getDBPassword();
+					break;
+				case self::DATASOURCE_CSV:
+					$exec .= ' -t csv --data-file ' . $this->getCsvFile();
+					$exec .= ' --csv-field-del=' . $this->quote($this->getCsvFieldDelimiter());
+					$exec .= ' --csv-record-del=' . $this->quote($this->getCsvRecordDelimiter());
+					$exec .= ' --csv-charset=' . $this->getCsvCharset();
+					if ($this->getCsvFirstRow()) {
+						$exec .= ' --csv-first-row';
+					} else {
+						if (count($this->getCsvColumns())) {
+							$exec .= ' --csv-columns ' . implode(',', $this->getCsvColumns());
+						}
 					}
-				}
-				break;
-		}
-		// Redirect stderr to stdout because PHP's exec() only returns stdout
-		// Note: If Jasperstarter one day returns anything on the stdout, we must use another function, e.g. proc_open()
-		$exec .= ' 2>&1';
-		$errors = array();
-		exec($exec, $errors);
-		if (count($errors)) {
-			$exception = new JasperReportException("Jasperstarter failed to generate output filed");
-			$exception->setErrors($errors);
-			throw $exception;
+					break;
+			}
+			// Redirect stderr to stdout because PHP's exec() only returns stdout
+			// Note: If Jasperstarter one day returns anything on the stdout, we must use another function, e.g. proc_open()
+			$exec .= ' 2>&1';
+			$errors = array();
+			exec($exec, $errors);
+			if (count($errors)) {
+				$exception = new JasperReportException("Jasperstarter failed to generate output filed");
+				$exception->setErrors($errors);
+				throw $exception;
+			}
+
+			$this->generated = true;
 		}
 
 		return $this->getOutputFile();
@@ -239,10 +241,9 @@ class JasperReport {
 	 * @param bool $exit_after
 	 */
 	public function downloadFile($exit_after = true) {
-		if (!$this->generated) {
-			$this->generateOutput();
-		}
-		ilUtil::deliverFile($this->getOutputFile() . '.pdf', basename($this->getOutputFile() . '.pdf'), '', true, true, $exit_after);
+		$output_file = $this->generateOutput();
+
+		ilUtil::deliverFile($output_file . '.pdf', basename($output_file . '.pdf'), '', true, true, $exit_after);
 	}
 
 
