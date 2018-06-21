@@ -11,10 +11,11 @@ require_once(__DIR__ . '/class.JasperReportException.php');
  */
 class JasperReport {
 
-	const VERSION = '2.0.0';
 	const DATASOURCE_EMPTY = 0;
 	const DATASOURCE_DB = 1;
 	const DATASOURCE_CSV = 2;
+
+	protected $version = '3.2.1';
 	/**
 	 * Choose a Locale from your unix-system: locale -a
 	 * The Locale should support all characters you need, such as German-Umlauts.
@@ -120,6 +121,11 @@ class JasperReport {
 	 */
 	function __construct($template, $output_name = 'myreport') {
 		global $DIC;
+        $output = shell_exec("java -version 2>&1");
+        if ((strpos($output, 'java version "1.6') !== false) || (strpos($output, 'java version "1.7') !== false)) {
+            $this->version = '2.0.0';
+        }
+
 		$this->db = $DIC->database();
 		$this->log = $DIC["ilLog"];
 		$this->user = $DIC->user();
@@ -186,7 +192,7 @@ class JasperReport {
 		// Build Execution Statement
 		$exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
 		$exec .= $this->getPathJava();
-		$exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . self::VERSION . '/lib/jasperstarter.jar pr';
+		$exec .= ' -jar ' . $this->getRoot() . 'lib/jasperstarter-' . $this->version . '/lib/jasperstarter.jar pr';
 		$exec .= ' ' . $this->template;
 		$exec .= ' -f ' . $this->getOutputMode() . ' ';
 		$exec .= ' -o ' . $this->getOutputFile();
