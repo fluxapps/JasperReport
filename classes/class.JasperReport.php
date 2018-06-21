@@ -220,7 +220,7 @@ class JasperReport {
 		$errors = array();
 		exec($exec, $errors);
 		if (count($errors)) {
-			$exception = new JasperReportException("Jasperstarter failed to generate output filed");
+            $exception = new JasperReportException("Jasperstarter failed to generate output filed: '" . implode("', '", $errors) . "'");
 			$exception->setErrors($errors);
 			throw $exception;
 		}
