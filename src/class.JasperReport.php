@@ -107,6 +107,10 @@ class JasperReport {
 	 * @var bool
 	 */
 	protected $generated = false;
+	/**
+	 * @var string
+	 */
+	protected $jasperstarter_version = self::JASPERSTARTER_VERSION;
 
 
 	/**
@@ -182,7 +186,7 @@ class JasperReport {
 			// Build Execution Statement
 			$exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
 			$exec .= $this->getPathJava();
-			$exec .= ' -jar ' . $this->getRoot() . '/vendor/rdpascua/jasperstarter/lib/jasperstarter-' . self::JASPERSTARTER_VERSION
+			$exec .= ' -jar ' . $this->getRoot() . '/vendor/rdpascua/jasperstarter/lib/jasperstarter-' . $this->jasperstarter_version
 				. '/lib/jasperstarter.jar pr';
 			$exec .= ' ' . $this->template;
 			$exec .= ' -f ' . $this->getOutputMode() . ' ';
@@ -217,7 +221,7 @@ class JasperReport {
 			$errors = array();
 			exec($exec, $errors);
 			if (count($errors)) {
-				$exception = new JasperReportException("Jasperstarter failed to generate output filed");
+				$exception = new JasperReportException("Jasperstarter failed to generate output filed: '" . implode("', '", $errors) . "'");
 				$exception->setErrors($errors);
 				throw $exception;
 			}
