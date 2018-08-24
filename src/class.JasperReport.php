@@ -181,7 +181,7 @@ class JasperReport {
 			// Build Execution Statement
 			$exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
 			$exec .= $this->getPathJava();
-			$exec .= ' -jar ' . $this->getRoot() . '/vendor/rdpascua/jasperstarter/lib/jasperstarter/lib/jasperstarter.jar pr';
+			$exec .= ' -jar ' . $this->getRoot() . '/../../rdpascua/jasperstarter/lib/jasperstarter.jar pr';
 			$exec .= ' ' . $this->template;
 			$exec .= ' -f ' . $this->getOutputMode() . ' ';
 			$exec .= ' -o ' . $this->getOutputFile();
