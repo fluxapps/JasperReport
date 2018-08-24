@@ -18,7 +18,6 @@ use srag\DIC\DICTrait;
 class JasperReport {
 
 	use DICTrait;
-	const JASPERSTARTER_VERSION = '3.3.0';
 	const DATASOURCE_EMPTY = 0;
 	const DATASOURCE_DB = 1;
 	const DATASOURCE_CSV = 2;
@@ -107,10 +106,6 @@ class JasperReport {
 	 * @var bool
 	 */
 	protected $generated = false;
-	/**
-	 * @var string
-	 */
-	protected $jasperstarter_version = self::JASPERSTARTER_VERSION;
 
 
 	/**
@@ -186,8 +181,7 @@ class JasperReport {
 			// Build Execution Statement
 			$exec = 'export LC_ALL="' . $this->getLocale() . '"; ';
 			$exec .= $this->getPathJava();
-			$exec .= ' -jar ' . $this->getRoot() . '/vendor/rdpascua/jasperstarter/lib/jasperstarter-' . $this->jasperstarter_version
-				. '/lib/jasperstarter.jar pr';
+			$exec .= ' -jar ' . $this->getRoot() . '/vendor/rdpascua/jasperstarter/lib/jasperstarter/lib/jasperstarter.jar pr';
 			$exec .= ' ' . $this->template;
 			$exec .= ' -f ' . $this->getOutputMode() . ' ';
 			$exec .= ' -o ' . $this->getOutputFile();
