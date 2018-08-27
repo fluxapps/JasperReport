@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.5]
+- Adjustment suggestions
+
 ## [2.0.4]
 - Adjustment suggestions
 
