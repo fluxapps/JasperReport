@@ -22,7 +22,7 @@ git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 First add the follow to your `composer.json` file:
 ```json
 "require": {
-  "srag/jasperreport": "^2.0.3"
+  "srag/jasperreport": "^2.0.4"
 },
 ```
 
@@ -51,6 +51,6 @@ https://studer-raimann.ch
 
 ### Adjustment suggestions
 * Adjustment suggestions by pull requests on https://git.studer-raimann.ch/ILIAS/Plugins/JasperReport/tree/develop
-* Adjustment suggestions which are not yet worked out in detail by Jira-Taks under https://jira.studer-raimann.ch/projects/PLREPORT
-* Bug reports under https://jira.studer-raimann.ch/projects/PLREPORT
+* Adjustment suggestions which are not yet worked out in detail by Jira-Taks under https://jira.studer-raimann.ch/projects/LJASPER
+* Bug reports under https://jira.studer-raimann.ch/projects/LJASPER
 * For external developers please send an email to support-custom1@studer-raimann.ch

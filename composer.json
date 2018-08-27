@@ -1,7 +1,7 @@
 {
   "name": "srag/jasperreport",
   "description": "This is an ILIAS wrapper for the JasperReport library. It allows ILIAS to print pretty PDF reports.",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "type": "library",
   "keywords": [
     "ILIAS",
@@ -14,13 +14,13 @@
   "authors": [
     {
       "name": "srag",
-      "email": "support@studer-raimann.ch",
+      "email": "support-custom1@studer-raimann.ch",
       "homepage": "https://studer-raimann.ch",
       "role": "Developer"
     }
   ],
   "support": {
-    "email": "support@studer-raimann.ch"
+    "email": "support-custom1@studer-raimann.ch"
   },
   "require": {
     "setasign/fpdi": "^2.0.3",
