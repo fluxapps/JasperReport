@@ -190,10 +190,11 @@ class JasperReport {
 			switch ($this->getDataSource()) {
 				case self::DATASOURCE_DB:
 					$exec .= ' -t ' . self::dic()->database()->getDBType();
-					$exec .= ' -u ' . self::dic()->database()->getDBUser();
-					$exec .= ' -H ' . self::dic()->database()->getDBHost();
-					$exec .= ' -n ' . self::dic()->database()->getDBName();
-					$exec .= ' -p ' . self::dic()->database()->getDBPassword();
+					$exec .= ' -u ' . self::dic()->clientIni()->readVariable("db", "user");
+					$exec .= ' -H ' . self::dic()->clientIni()->readVariable("db", "host");
+					$exec .= ' -n ' . self::dic()->clientIni()->readVariable("db", "name");
+					$exec .= ' -p ' . self::dic()->clientIni()->readVariable("db", "pass");
+					//TODO: self::dic()->clientIni()->readVariable("db", "port");
 					break;
 				case self::DATASOURCE_CSV:
 					$exec .= ' -t csv --data-file ' . $this->getCsvFile();
