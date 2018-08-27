@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.3]
+- Adjustment suggestions
+
 ## [2.0.2]
 - Some fixes
 
