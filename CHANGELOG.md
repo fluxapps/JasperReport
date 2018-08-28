@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.7]
+- Use latest DIC
+
 ## [2.0.6]
 - Read database config over client file and not over the non interface methods of database
 
