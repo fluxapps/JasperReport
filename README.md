@@ -22,7 +22,7 @@ git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 First add the follow to your `composer.json` file:
 ```json
 "require": {
-  "srag/jasperreport": "^2.0.7"
+  "srag/jasperreport": "^2.0.8"
 },
 ```
 
