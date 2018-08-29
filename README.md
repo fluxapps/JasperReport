@@ -7,15 +7,6 @@ Dependencies:
 - For older Java versions or for non Composer version, use the follow commit: https://github.com/studer-raimann/JasperReport/commit/dc9476fcad0f8e4955ea9300581d9f6dc04ab6d6
 - Make sure that the webservice user has assigned a shell (e.g. at your own risk: $ sudo chsh -s '/bin/sh' www-data). Otherwise all PDF generation responses will come back empty.
 
-### Install
-For development you should install this library like follow:
-
-Start at your ILIAS root directory 
-```bash
-mkdir -p Customizing/global/plugins/Libraries/  
-cd Customizing/global/plugins/Libraries/  
-git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
-```
 ### Usage
 
 #### Composer
@@ -54,3 +45,13 @@ https://studer-raimann.ch
 * Adjustment suggestions which are not yet worked out in detail by Jira tasks under https://jira.studer-raimann.ch/projects/LJASPER
 * Bug reports under https://jira.studer-raimann.ch/projects/LJASPER
 * For external developers please send an email to support-custom1@studer-raimann.ch
+
+### Development
+If you want development in this library you should install this library like follow:
+
+Start at your ILIAS root directory 
+```bash
+mkdir -p Customizing/global/plugins/Libraries/  
+cd Customizing/global/plugins/Libraries/  
+git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
+```
