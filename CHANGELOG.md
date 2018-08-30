@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.11]
+- Use always latest version of JasperReport
+
 ## [2.0.10]
 - Use latest DIC
 
