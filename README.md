@@ -13,7 +13,7 @@ Dependencies:
 First add the follow to your `composer.json` file:
 ```json
 "require": {
-  "srag/jasperreport": "^2.0.8"
+  "srag/jasperreport": "^2.0.9"
 },
 ```
 
