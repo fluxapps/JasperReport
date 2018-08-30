@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.10]
+- Use latest DIC
+
 ## [2.0.9]
 - Use latest DIC
 
