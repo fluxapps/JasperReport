@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.12]
+- PHP min version
+
 ## [2.0.11]
 - Use always latest version of JasperReport
 
