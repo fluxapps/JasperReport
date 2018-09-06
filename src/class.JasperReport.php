@@ -114,7 +114,9 @@ class JasperReport {
 	 * @param string $template    Path and filename of the xml template for the report
 	 * @param string $output_name Filename of the generated pdf
 	 */
-	function __construct($template, $output_name = 'myreport') {
+	function __construct(/*string*/
+		$template, /*string*/
+		$output_name = 'myreport') {
 		$this->template = $template;
 		$this->setOutputName($output_name);
 		$this->makeTempDir();
