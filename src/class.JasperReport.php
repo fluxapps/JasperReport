@@ -124,7 +124,7 @@ class JasperReport {
 	/**
 	 *
 	 */
-	protected function makeTempDir() {
+	protected function makeTempDir()/*: void*/ {
 		$tmpdir = ilUtil::ilTempnam();
 		ilUtil::makeDir($tmpdir);
 		$this->setTmpdir($tmpdir);
@@ -136,7 +136,7 @@ class JasperReport {
 	 *
 	 * @return string
 	 */
-	protected function buildParameters() {
+	protected function buildParameters()/*: string*/ {
 		$return = '';
 		if (count($this->parameters)) {
 			$return = ' -P ';
@@ -154,7 +154,8 @@ class JasperReport {
 	 *
 	 * @return string
 	 */
-	protected function quote($str) {
+	protected function quote(/*string*/
+		$str)/*: string*/ {
 		return '"' . str_replace('"', '\"', $str) . '"';
 	}
 
@@ -175,7 +176,7 @@ class JasperReport {
 	 * @return string
 	 * @throws Exception
 	 */
-	public function generateOutput() {
+	public function generateOutput()/*: string*/ {
 		if (!$this->generated) {
 			$this->output_file = $this->getTmpdir() . DIRECTORY_SEPARATOR . $this->getOutputName();
 			// Build Execution Statement
@@ -231,7 +232,8 @@ class JasperReport {
 	/**
 	 * @param bool $exit_after
 	 */
-	public function downloadFile($exit_after = true) {
+	public function downloadFile(/*bool*/
+		$exit_after = true)/*: void*/ {
 		$output_file = $this->generateOutput();
 
 		ilUtil::deliverFile($output_file . '.pdf', basename($output_file . '.pdf'), '', true, true, $exit_after);
@@ -241,18 +243,29 @@ class JasperReport {
 	/**
 	 * Add a parameter
 	 *
-	 * @param $key
-	 * @param $value
+	 * @param string $key
+	 * @param string $value
 	 */
-	public function addParameter($key, $value) {
+	public function addParameter(/*string*/
+		$key, /*string*/
+		$value)/*: void*/ {
 		$this->parameters[$key] = $value;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getOutputName()/*: string*/ {
+		return $this->output_name;
 	}
 
 
 	/**
 	 * @param string $output_name
 	 */
-	public function setOutputName($output_name) {
+	public function setOutputName(/*string*/
+		$output_name)/*: void*/ {
 		$this->output_name = $output_name;
 	}
 
@@ -260,87 +273,91 @@ class JasperReport {
 	/**
 	 * @return string
 	 */
-	public function getOutputName() {
-		return $this->output_name;
+	private function getRoot()/*: string*/ {
+		return __DIR__ . "/..";
 	}
 
 
 	/**
 	 * @return string
 	 */
-	private function getRoot() {
-		return __DIR__ . "/..";
+	private function getTmpdir()/*: string*/ {
+		return $this->tmpdir;
 	}
 
 
 	/**
 	 * @param string $tmpdir
 	 */
-	private function setTmpdir($tmpdir) {
+	private function setTmpdir(/*string*/
+		$tmpdir)/*: void*/ {
 		$this->tmpdir = $tmpdir;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	private function getTmpdir() {
-		return $this->tmpdir;
-	}
-
-
-	/**
-	 * @param array $parameters
-	 */
-	public function setParameters($parameters) {
-		$this->parameters = $parameters;
 	}
 
 
 	/**
 	 * @return array
 	 */
-	public function getParameters() {
+	public function getParameters()/*: array*/ {
 		return $this->parameters;
 	}
 
 
 	/**
-	 * @param string $encoding
+	 * @param array $parameters
 	 */
-	public function setEncoding($encoding) {
-		$this->encoding = $encoding;
+	public function setParameters(array $parameters)/*: void*/ {
+		$this->parameters = $parameters;
 	}
 
 
 	/**
 	 * @return string
 	 */
-	public function getEncoding() {
+	public function getEncoding()/*: string*/ {
 		return $this->encoding;
 	}
 
 
 	/**
-	 * @param int $data_source
+	 * @param string $encoding
 	 */
-	public function setDataSource($data_source) {
-		$this->data_source = $data_source;
+	public function setEncoding(/*string*/
+		$encoding)/*: void*/ {
+		$this->encoding = $encoding;
 	}
 
 
 	/**
 	 * @return int
 	 */
-	public function getDataSource() {
+	public function getDataSource()/*: int*/ {
 		return $this->data_source;
+	}
+
+
+	/**
+	 * @param int $data_source
+	 */
+	public function setDataSource(/*int*/
+		$data_source)/*: void*/ {
+		$this->data_source = $data_source;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getCsvFile()/*: string*/ {
+		return $this->csv_file;
 	}
 
 
 	/**
 	 * @param string $csv_file
 	 */
-	public function setCsvFile($csv_file) {
+	public function setCsvFile(/*string*/
+		$csv_file)/*: void*/ {
 		$this->csv_file = $csv_file;
 	}
 
@@ -348,79 +365,84 @@ class JasperReport {
 	/**
 	 * @return string
 	 */
-	public function getCsvFile() {
-		return $this->csv_file;
+	public function getCsvCharset()/*: string*/ {
+		return $this->csv_charset;
 	}
 
 
 	/**
 	 * @param string $csv_charset
 	 */
-	public function setCsvCharset($csv_charset) {
+	public function setCsvCharset(/*string*/
+		$csv_charset)/*: void*/ {
 		$this->csv_charset = $csv_charset;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getCsvCharset() {
-		return $this->csv_charset;
-	}
-
-
-	/**
-	 * @param array $csv_columns
-	 */
-	public function setCsvColumns($csv_columns) {
-		$this->csv_columns = $csv_columns;
 	}
 
 
 	/**
 	 * @return array
 	 */
-	public function getCsvColumns() {
+	public function getCsvColumns()/*: string*/ {
 		return $this->csv_columns;
 	}
 
 
 	/**
-	 * @param string $csv_field_delimiter
+	 * @param array $csv_columns
 	 */
-	public function setCsvFieldDelimiter($csv_field_delimiter) {
-		$this->csv_field_delimiter = $csv_field_delimiter;
+	public function setCsvColumns(/*string*/
+		$csv_columns)/*: void*/ {
+		$this->csv_columns = $csv_columns;
 	}
 
 
 	/**
 	 * @return string
 	 */
-	public function getCsvFieldDelimiter() {
+	public function getCsvFieldDelimiter()/*: string*/ {
 		return $this->csv_field_delimiter;
 	}
 
 
 	/**
-	 * @param boolean $csv_first_row
+	 * @param string $csv_field_delimiter
 	 */
-	public function setCsvFirstRow($csv_first_row) {
-		$this->csv_first_row = $csv_first_row;
+	public function setCsvFieldDelimiter(/*string*/
+		$csv_field_delimiter)/*: void*/ {
+		$this->csv_field_delimiter = $csv_field_delimiter;
 	}
 
 
 	/**
 	 * @return boolean
 	 */
-	public function getCsvFirstRow() {
+	public function getCsvFirstRow()/*: bool*/ {
 		return $this->csv_first_row;
+	}
+
+
+	/**
+	 * @param boolean $csv_first_row
+	 */
+	public function setCsvFirstRow(/*string*/
+		$csv_first_row)/*: void*/ {
+		$this->csv_first_row = $csv_first_row;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getCsvRecordDelimiter()/*: string*/ {
+		return $this->csv_record_delimiter;
 	}
 
 
 	/**
 	 * @param string $csv_record_delimiter
 	 */
-	public function setCsvRecordDelimiter($csv_record_delimiter) {
+	public function setCsvRecordDelimiter(/*string*/
+		$csv_record_delimiter)/*: void*/ {
 		$this->csv_record_delimiter = $csv_record_delimiter;
 	}
 
@@ -428,15 +450,16 @@ class JasperReport {
 	/**
 	 * @return string
 	 */
-	public function getCsvRecordDelimiter() {
-		return $this->csv_record_delimiter;
+	public function getPathJava()/*: string*/ {
+		return $this->path_java;
 	}
 
 
 	/**
 	 * @param string $path_java
 	 */
-	public function setPathJava($path_java) {
+	public function setPathJava(/*string*/
+		$path_java)/*: void*/ {
 		$this->path_java = $path_java;
 	}
 
@@ -444,15 +467,7 @@ class JasperReport {
 	/**
 	 * @return string
 	 */
-	public function getPathJava() {
-		return $this->path_java;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getLocale() {
+	public function getLocale()/*: string*/ {
 		return $this->locale;
 	}
 
@@ -460,7 +475,8 @@ class JasperReport {
 	/**
 	 * @param string $locale
 	 */
-	public function setLocale($locale) {
+	public function setLocale(/*string*/
+		$locale)/*: void*/ {
 		$this->locale = $locale;
 	}
 
@@ -468,7 +484,7 @@ class JasperReport {
 	/**
 	 * @return string
 	 */
-	public function getOutputMode() {
+	public function getOutputMode()/*: string*/ {
 		return $this->output_mode;
 	}
 
@@ -476,7 +492,8 @@ class JasperReport {
 	/**
 	 * @param string $output_mode
 	 */
-	public function setOutputMode($output_mode) {
+	public function setOutputMode(/*string*/
+		$output_mode)/*: void*/ {
 		$this->output_mode = $output_mode;
 	}
 
@@ -484,7 +501,7 @@ class JasperReport {
 	/**
 	 * @return string
 	 */
-	public function getOutputFile() {
+	public function getOutputFile()/*: string*/ {
 		return $this->output_file;
 	}
 }

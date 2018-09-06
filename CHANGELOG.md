@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.13]
+- PHP7 comments
+
 ## [2.0.12]
 - PHP min version
 

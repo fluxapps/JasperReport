@@ -24,7 +24,8 @@ class JasperReportException extends Exception {
 	 *
 	 * @param string $message
 	 */
-	public function __construct($message) {
+	public function __construct(/*string*/
+		$message) {
 		parent::__construct($message, 0, NULL);
 	}
 
@@ -32,7 +33,7 @@ class JasperReportException extends Exception {
 	/**
 	 * @param array $errors
 	 */
-	public function setErrors(array $errors) {
+	public function setErrors(array $errors)/*: void*/ {
 		$this->errors = $errors;
 	}
 
@@ -40,7 +41,7 @@ class JasperReportException extends Exception {
 	/**
 	 * @return array
 	 */
-	public function getErrors() {
+	public function getErrors()/*: array*/ {
 		return $this->errors;
 	}
 }
