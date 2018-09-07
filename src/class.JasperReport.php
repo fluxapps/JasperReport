@@ -7,10 +7,11 @@ use ilUtil;
 use srag\DIC\DICTrait;
 
 /**
- * class JasperReport
+ * Class JasperReport
  *
  * @package srag\JasperReport
  *
+ * @author  studer + raimann ag <support-custom1@studer-raimann.ch>
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @author  Martin Studer <ms@studer-raimann.ch>
  * @author  Stefan Wanzenried <sw@studer-raimann.ch>
