@@ -9,6 +9,7 @@ use Exception;
  *
  * @package srag\JasperReport
  *
+ * @author  studer + raimann ag <support-custom1@studer-raimann.ch>
  * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  */
 class JasperReportException extends Exception {
