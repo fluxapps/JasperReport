@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.16]
+- Added dependencies to readme
+
 ## [2.0.15]
 - Add `@author` to classes
 
@@ -47,4 +50,3 @@
 
 ## [2.0.0]
 - First version over Composer
-
