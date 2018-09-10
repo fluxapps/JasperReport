@@ -36,9 +36,12 @@ Setzen Sie eines unserer Plugins professionell ein? Sichern Sie sich mittels SLA
 
 Bitte beachten Sie, dass wir nur Institutionen, welche ein SLA abschliessen Unterstützung und Release-Pflege garantieren.
 
-### Contact
-info@studer-raimann.ch  
-https://studer-raimann.ch  
+### Dependencies
+* [rdpascua/jasperstarter](https://packagist.org/packages/rdpascua/jasperstarter)
+* [setasign/fpdi](https://packagist.org/packages/setasign/fpdi)
+* [srag/dic](https://packagist.org/packages/srag/dic)
+
+Please use it for further development!
 
 ### Adjustment suggestions
 * Adjustment suggestions by pull requests on https://git.studer-raimann.ch/ILIAS/Plugins/JasperReport/tree/develop
@@ -55,3 +58,7 @@ mkdir -p Customizing/global/plugins/Libraries/
 cd Customizing/global/plugins/Libraries/  
 git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 ```
+
+### Contact
+info@studer-raimann.ch
+https://studer-raimann.ch
