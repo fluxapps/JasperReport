@@ -37,6 +37,7 @@ Setzen Sie eines unserer Plugins professionell ein? Sichern Sie sich mittels SLA
 Bitte beachten Sie, dass wir nur Institutionen, welche ein SLA abschliessen Unterstützung und Release-Pflege garantieren.
 
 ### Dependencies
+* [composer](https://getcomposer.org)
 * [rdpascua/jasperstarter](https://packagist.org/packages/rdpascua/jasperstarter)
 * [setasign/fpdi](https://packagist.org/packages/setasign/fpdi)
 * [srag/dic](https://packagist.org/packages/srag/dic)
