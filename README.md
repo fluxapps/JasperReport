@@ -37,6 +37,7 @@ Setzen Sie eines unserer Plugins professionell ein? Sichern Sie sich mittels SLA
 Bitte beachten Sie, dass wir nur Institutionen, welche ein SLA abschliessen Unterstützung und Release-Pflege garantieren.
 
 ### Dependencies
+* [composer](https://getcomposer.org)
 * [rdpascua/jasperstarter](https://packagist.org/packages/rdpascua/jasperstarter)
 * [setasign/fpdi](https://packagist.org/packages/setasign/fpdi)
 * [srag/dic](https://packagist.org/packages/srag/dic)
@@ -47,15 +48,15 @@ Please use it for further development!
 * Adjustment suggestions by pull requests on https://git.studer-raimann.ch/ILIAS/Plugins/JasperReport/tree/develop
 * Adjustment suggestions which are not yet worked out in detail by Jira tasks under https://jira.studer-raimann.ch/projects/LJASPER
 * Bug reports under https://jira.studer-raimann.ch/projects/LJASPER
-* For external developers please send an email to support-custom1@studer-raimann.ch
+* For external users please send an email to support-custom1@studer-raimann.ch
 
 ### Development
 If you want development in this library you should install this library like follow:
 
-Start at your ILIAS root directory 
+Start at your ILIAS root directory
 ```bash
-mkdir -p Customizing/global/plugins/Libraries/  
-cd Customizing/global/plugins/Libraries/  
+mkdir -p Customizing/global/plugins/Libraries
+cd Customizing/global/plugins/Libraries
 git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 ```
 
