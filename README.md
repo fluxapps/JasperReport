@@ -61,5 +61,5 @@ git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 ```
 
 ### Contact
-info@studer-raimann.ch
+support-custom1@studer-raimann.ch
 https://studer-raimann.ch
