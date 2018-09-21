@@ -31,5 +31,10 @@
     "psr-4": {
       "srag\\JasperReport\\": "src/"
     }
+  },
+  "config": {
+    "classmap-authoritative": true,
+    "optimize-autoloader": true,
+    "sort-packages": true
   }
 }
