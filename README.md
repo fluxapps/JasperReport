@@ -29,6 +29,7 @@ Hint: Because of multiple autoloaders of plugins, it could be, that different ve
 [iReport Designer](https://community.jaspersoft.com/project/ireport-designer)
 
 ### Dependencies
+* PHP 5.6
 * [composer](https://getcomposer.org)
 * [rdpascua/jasperstarter](https://packagist.org/packages/rdpascua/jasperstarter)
 * [setasign/fpdi](https://packagist.org/packages/setasign/fpdi)
