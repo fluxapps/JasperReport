@@ -21,7 +21,7 @@ And run a `composer install`.
 
 If you deliver your plugin, the plugin has it's own copy of this library and the user doesn't need to install the library.
 
-You can now remove the global installed `Customizing/global/plugins/Libraries/JasperReport` on productive usages
+You can now remove the global installed `Customizing/global/libraries/JasperReport` on productive usages
 
 Hint: Because of multiple autoloaders of plugins, it could be, that different versions of this library exists and suddenly your plugin use an old version of an other plugin! So you should keep up to date your plugin with `composer update`.
 
@@ -48,8 +48,8 @@ If you want development in this library you should install this library like fol
 
 Start at your ILIAS root directory
 ```bash
-mkdir -p Customizing/global/plugins/Libraries
-cd Customizing/global/plugins/Libraries
+mkdir -p Customizing/global/libraries
+cd Customizing/global/libraries
 git clone -b develop git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 ```
 
