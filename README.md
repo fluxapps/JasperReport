@@ -23,7 +23,9 @@ If you deliver your plugin, the plugin has it's own copy of this library and the
 
 You can now remove the global installed `Customizing/global/libraries/JasperReport` on productive usages
 
-Hint: Because of multiple autoloaders of plugins, it could be, that different versions of this library exists and suddenly your plugin use an old version of an other plugin! So you should keep up to date your plugin with `composer update`.
+Tip: Because of multiple autoloaders of plugins, it could be, that different versions of this library exists and suddenly your plugin use an older or a newer version of an other plugin!
+
+So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/packages/srag/librariesnamespacechanger)
 
 ### Generate Jasper xml template files
 [iReport Designer](https://community.jaspersoft.com/project/ireport-designer)
