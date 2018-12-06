@@ -10,7 +10,7 @@ Dependencies:
 ### Usage
 
 #### Composer
-First add the follow to your `composer.json` file:
+First add the following to your `composer.json` file:
 ```json
 "require": {
   "srag/jasperreport": ">=0.1.0"
@@ -21,22 +21,17 @@ And run a `composer install`.
 
 If you deliver your plugin, the plugin has it's own copy of this library and the user doesn't need to install the library.
 
-You can now remove the global installed `Customizing/global/plugins/Libraries/JasperReport` on productive usages
+You can now remove the global installed `Customizing/global/libraries/JasperReport` on productive usages
 
-Hint: Because of multiple autoloaders of plugins, it could be, that different versions of this library exists and suddenly your plugin use an old version of an other plugin! So you should keep up to date your plugin with `composer update`.
+Tip: Because of multiple autoloaders of plugins, it could be, that different versions of this library exists and suddenly your plugin use an older or a newer version of an other plugin!
+
+So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/packages/srag/librariesnamespacechanger)
 
 ### Generate Jasper xml template files
 [iReport Designer](https://community.jaspersoft.com/project/ireport-designer)
 
-### ILIAS Plugin SLA
-
-Wir lieben und leben die Philosophie von Open Source Software! Die meisten unserer Entwicklungen, welche wir im Kundenauftrag oder in Eigenleistung entwickeln, stellen wir öffentlich allen Interessierten kostenlos unter https://github.com/studer-raimann zur Verfügung.
-
-Setzen Sie eines unserer Plugins professionell ein? Sichern Sie sich mittels SLA die termingerechte Verfügbarkeit dieses Plugins auch für die kommenden ILIAS Versionen. Informieren Sie sich hierzu unter https://studer-raimann.ch/produkte/ilias-plugins/plugin-sla.
-
-Bitte beachten Sie, dass wir nur Institutionen, welche ein SLA abschliessen Unterstützung und Release-Pflege garantieren.
-
 ### Dependencies
+* PHP >=5.6
 * [composer](https://getcomposer.org)
 * [rdpascua/jasperstarter](https://packagist.org/packages/rdpascua/jasperstarter)
 * [setasign/fpdi](https://packagist.org/packages/setasign/fpdi)
@@ -55,9 +50,9 @@ If you want development in this library you should install this library like fol
 
 Start at your ILIAS root directory
 ```bash
-mkdir -p Customizing/global/plugins/Libraries
-cd Customizing/global/plugins/Libraries
-git clone git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
+mkdir -p Customizing/global/libraries
+cd Customizing/global/libraries
+git clone -b develop git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 ```
 
 ### Contact

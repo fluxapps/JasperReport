@@ -1,7 +1,6 @@
 {
   "name": "srag/jasperreport",
   "description": "This is an ILIAS wrapper for the JasperReport library. It allows ILIAS to print pretty PDF reports.",
-  "version": "2.0.18",
   "type": "library",
   "keywords": [
     "ILIAS",
@@ -31,5 +30,10 @@
     "psr-4": {
       "srag\\JasperReport\\": "src/"
     }
+  },
+  "config": {
+    "classmap-authoritative": true,
+    "optimize-autoloader": true,
+    "sort-packages": true
   }
 }
