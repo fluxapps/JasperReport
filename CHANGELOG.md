@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.20]
+- Fixes
+
 ## [2.0.19]
 - Fix
 
