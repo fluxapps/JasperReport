@@ -54,7 +54,3 @@ mkdir -p Customizing/global/libraries
 cd Customizing/global/libraries
 git clone -b develop git@git.studer-raimann.ch:ILIAS/Plugins/JasperReport.git JasperReport
 ```
-
-### Contact
-support-custom1@studer-raimann.ch
-https://studer-raimann.ch
