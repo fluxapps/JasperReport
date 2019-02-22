@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.21]
+- Change default locale to C.UTF-8
+
 ## [2.0.20]
 - Fixes
 
