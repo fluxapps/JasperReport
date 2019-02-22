@@ -28,7 +28,7 @@ class JasperReport {
 	 *
 	 * @var string
 	 */
-	protected $locale = 'de_DE.UTF-8';
+	protected $locale = 'C.UTF-8';
 	/**
 	 * The filename of the output file that is generated
 	 *
